@@ -32,13 +32,10 @@ const removeContact = async (contactId) => {
   try {
     const contacts = await listContacts();
     const contactsFiltred = contacts.filter((item) => {
-      return contactId !== item.id;
+      return contactId.toString() !== item.id;
     });
-    if (contacts.length === contactsFiltred.length) {
-      return false;
-    }
     await fs.writeFile(contactsPath, JSON.stringify(contactsFiltred, null, 2));
-    return true;
+    return contacts.length !== contactsFiltred.length;
   } catch (error) {
     console.log(error);
   }
@@ -63,7 +60,7 @@ const updateContact = async (contactId, body) => {
   try {
     const contacts = await listContacts();
     contacts.forEach((contact) => {
-      if (contact.id === contactId) {
+      if (contact.id === contactId.toString()) {
         contact.name = body.name;
         contact.email = body.email;
         contact.phone = body.phone;
@@ -73,7 +70,7 @@ const updateContact = async (contactId, body) => {
     await fs.writeFile(contactsPath, newContacts);
 
     const changedContact = contacts.filter(
-      (contact) => contact.id === contactId
+      (contact) => contact.id === contactId.toString()
     );
     return changedContact;
   } catch (error) {
