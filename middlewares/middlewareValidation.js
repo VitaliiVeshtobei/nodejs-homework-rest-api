@@ -1,4 +1,4 @@
-const { validationSchema } = require("./validationSchema");
+const { validationSchema } = require("../utils/validation/validationSchema");
 
 module.exports = {
   validation: (req, res, next) => {
