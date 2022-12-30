@@ -5,7 +5,7 @@ const listContacts = async (req, res, next) => {
     const contacts = await Contact.find();
     res.status(200).json({ contacts, message: "success response" });
   } catch (error) {
-    console.log(error.message);
+    next(error.message);
   }
 };
 
@@ -13,12 +13,12 @@ const getContactById = async (req, res, next) => {
   const { contactId } = req.params;
   try {
     const contactById = await Contact.findById(contactId);
-    if (contactById) {
-      return res.status(200).json({ contactById, message: "success response" });
+    if (!contactById) {
+      return res.status(404).json({ message: "Not found" });
     }
-    res.status(404).json({ message: "Not found" });
+    res.status(200).json({ contactById, message: "success response" });
   } catch (error) {
-    console.log(error.message);
+    next(error.message);
   }
 };
 
@@ -26,12 +26,12 @@ const removeContact = async (req, res, next) => {
   const { contactId } = req.params;
   try {
     const deletedContact = await Contact.findByIdAndRemove(contactId);
-    if (deletedContact) {
-      return res.status(200).json({ message: "contact deleted" });
+    if (!deletedContact) {
+      return res.status(404).json({ message: "Not found" });
     }
-    return res.status(404).json({ message: "Not found" });
+    res.status(200).json({ message: "contact deleted" });
   } catch (error) {
-    console.log(error.message);
+    next(error.message);
   }
 };
 
@@ -40,7 +40,7 @@ const addContact = async (req, res, next) => {
     const addedContact = await Contact.create(req.body);
     res.status(201).json({ addedContact, message: "contatct added" });
   } catch (error) {
-    console.log(error.message);
+    next(error.message);
   }
 };
 
@@ -48,20 +48,19 @@ const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
   const body = req.body;
   try {
-    if (body) {
-      const changedContact = await Contact.findByIdAndUpdate(contactId, body, {
-        new: true,
-      });
-      if (changedContact) {
-        return res
-          .status(200)
-          .json({ changedContact, message: "success response" });
-      }
+    if (!body) {
+      return res.status(400).json({ message: "missing fields" });
+    }
+    const changedContact = await Contact.findByIdAndUpdate(contactId, body, {
+      new: true,
+    });
+    if (!changedContact) {
       return res.status(404).json({ message: "Not found" });
     }
-    res.status(400).json({ message: "missing fields" });
+
+    res.status(200).json({ changedContact, message: "success response" });
   } catch (error) {
-    console.log(error.message);
+    next(error.message);
   }
 };
 
@@ -81,14 +80,12 @@ const updateStatusContact = async (req, res, next) => {
         new: true,
       }
     );
-    if (changedContactStatus) {
-      return res
-        .status(200)
-        .json({ changedContactStatus, message: "success response" });
+    if (!changedContactStatus) {
+      return res.status(404).json({ message: "Not found" });
     }
-    return res.status(404).json({ message: "Not found" });
+    res.status(200).json({ changedContactStatus, message: "success response" });
   } catch (error) {
-    console.log(error.message);
+    next(error.message);
   }
 };
 
