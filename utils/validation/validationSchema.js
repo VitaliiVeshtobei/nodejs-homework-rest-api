@@ -13,5 +13,11 @@ const validationSchema = () => {
   });
   return schema;
 };
+const validationSchemaStatus = () => {
+  const schema = Joi.object({
+    favorite: Joi.boolean(),
+  });
+  return schema;
+};
 
-module.exports = { validationSchema };
+module.exports = { validationSchema, validationSchemaStatus };
