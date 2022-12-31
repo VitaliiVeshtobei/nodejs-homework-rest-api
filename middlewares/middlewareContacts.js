@@ -18,6 +18,7 @@ const getContactById = async (req, res, next) => {
     }
     res.status(200).json({ contactById, message: "success response" });
   } catch (error) {
+    res.status(404).json({ message: "Not found" });
     next(error.message);
   }
 };
@@ -25,12 +26,13 @@ const getContactById = async (req, res, next) => {
 const removeContact = async (req, res, next) => {
   const { contactId } = req.params;
   try {
-    const deletedContact = await Contact.findByIdAndRemove(contactId);
-    if (!deletedContact) {
+    const removedContact = await Contact.findByIdAndRemove(contactId);
+    if (!removedContact) {
       return res.status(404).json({ message: "Not found" });
     }
     res.status(200).json({ message: "contact deleted" });
   } catch (error) {
+    res.status(404).json({ message: "Not found" });
     next(error.message);
   }
 };
