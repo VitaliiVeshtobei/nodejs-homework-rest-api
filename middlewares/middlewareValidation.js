@@ -5,6 +5,7 @@ const {
 
 const {
   validationSchemaUserSignup,
+  validationSchemaUserSubscription,
 } = require("../utils/validation/validationSchemaUsers");
 
 module.exports = {
@@ -20,6 +21,16 @@ module.exports = {
   },
   validationContactStatus: (req, res, next) => {
     const schema = validationSchemaContactStatus();
+    const validationResult = schema.validate(req.body);
+    if (validationResult.error) {
+      return res
+        .status(404)
+        .json({ message: validationResult.error.details[0].message });
+    }
+    next();
+  },
+  validationUserSubscription: (req, res, next) => {
+    const schema = validationSchemaUserSubscription();
     const validationResult = schema.validate(req.body);
     if (validationResult.error) {
       return res

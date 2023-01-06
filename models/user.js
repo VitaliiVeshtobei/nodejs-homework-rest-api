@@ -1,4 +1,4 @@
-const { Schema, model, SchemaTypes } = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema({
   password: {
@@ -18,10 +18,6 @@ const userSchema = new Schema({
   token: {
     type: String,
     default: null,
-  },
-  owner: {
-    type: SchemaTypes.ObjectId,
-    ref: "user",
   },
 });
 

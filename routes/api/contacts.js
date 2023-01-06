@@ -7,6 +7,8 @@ const {
   validationContactStatus,
 } = require("../../middlewares/middlewareValidation");
 
+const { auth } = require("../../middlewares/auth");
+
 const {
   listContacts,
   getContactById,
@@ -16,11 +18,11 @@ const {
   updateStatusContact,
 } = require("../../controllers/contacts");
 
-router.get("/", listContacts);
+router.get("/", auth, listContacts);
 
 router.get("/:contactId", getContactById);
 
-router.post("/", validationContact, addContact);
+router.post("/", auth, validationContact, addContact);
 
 router.delete("/:contactId", removeContact);
 

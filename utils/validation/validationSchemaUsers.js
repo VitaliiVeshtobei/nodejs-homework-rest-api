@@ -14,4 +14,14 @@ const validationSchemaUserSignup = () => {
   return schema;
 };
 
-module.exports = { validationSchemaUserSignup };
+const validationSchemaUserSubscription = () => {
+  const schema = Joi.object({
+    subscription: Joi.string(),
+  });
+  return schema;
+};
+
+module.exports = {
+  validationSchemaUserSignup,
+  validationSchemaUserSubscription,
+};

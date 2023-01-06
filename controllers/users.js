@@ -40,6 +40,7 @@ const login = async (req, res, next) => {
       id: user._id,
     };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
+    await User.findByIdAndUpdate(user._id, { token });
     res.status(200).json({
       user: {
         token,
@@ -49,10 +50,54 @@ const login = async (req, res, next) => {
         },
       },
     });
-  } catch (error) {}
+  } catch (error) {
+    next(error.message);
+  }
 };
 const getCurrent = async (req, res, next) => {
-  console.log(req.user);
+  const { email } = req.user;
+  res.status(200).json({
+    email,
+    subscription: "starter",
+  });
 };
 
-module.exports = { signup, login, getCurrent };
+const logout = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const user = await User.findByIdAndUpdate(_id, { token: null });
+    console.log(user);
+    if (!user) {
+      return res.status(401).json({
+        message: "Not authorized",
+      });
+    }
+    res.status(204).json();
+  } catch (error) {
+    next(error.message);
+  }
+};
+
+const updateSubscription = async (req, res, next) => {
+  const { userID } = req.params;
+  const body = req.body;
+
+  if (!body) {
+    return res.status(400).json({ message: "missing fields" });
+  }
+
+  try {
+    const changedSubscription = await User.findByIdAndUpdate(userID, body, {
+      new: true,
+    });
+
+    if (!changedSubscription) {
+      return res.status(404).json({ message: "Not found" });
+    }
+    res.status(200).json({ changedSubscription, message: "success response" });
+  } catch (error) {
+    next(error.message);
+  }
+};
+
+module.exports = { signup, login, getCurrent, logout, updateSubscription };
