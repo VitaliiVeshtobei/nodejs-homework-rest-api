@@ -5,10 +5,10 @@ const listContacts = async (req, res, next) => {
   const { page = 1, limit = 20 } = req.query;
   const { favorite } = req.query;
   console.log(favorite);
-  const scip = (page - 1) * limit;
+  const skip = (page - 1) * limit;
   try {
     const contacts = await Contact.find({ owner: _id, favorite }, "", {
-      scip,
+      skip,
       limit: +limit,
     }).populate("owner", "_id email");
     res.status(200).json({ contacts, message: "success response" });
