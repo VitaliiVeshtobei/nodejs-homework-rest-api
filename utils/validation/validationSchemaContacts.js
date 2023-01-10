@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const validationSchema = () => {
+const validationSchemaContact = () => {
   const schema = Joi.object({
     name: Joi.string().alphanum().min(3).max(30).required(),
     email: Joi.string()
@@ -13,11 +13,12 @@ const validationSchema = () => {
   });
   return schema;
 };
-const validationSchemaStatus = () => {
+
+const validationSchemaContactStatus = () => {
   const schema = Joi.object({
     favorite: Joi.boolean(),
   });
   return schema;
 };
 
-module.exports = { validationSchema, validationSchemaStatus };
+module.exports = { validationSchemaContact, validationSchemaContactStatus };

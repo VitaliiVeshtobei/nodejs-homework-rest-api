@@ -1,11 +1,16 @@
 const {
-  validationSchema,
-  validationSchemaStatus,
-} = require("../utils/validation/validationSchema");
+  validationSchemaContact,
+  validationSchemaContactStatus,
+} = require("../utils/validation/validationSchemaContacts");
+
+const {
+  validationSchemaUserSignup,
+  validationSchemaUserSubscription,
+} = require("../utils/validation/validationSchemaUsers");
 
 module.exports = {
-  validation: (req, res, next) => {
-    const schema = validationSchema();
+  validationContact: (req, res, next) => {
+    const schema = validationSchemaContact();
     const validationResult = schema.validate(req.body);
     if (validationResult.error) {
       return res
@@ -14,8 +19,28 @@ module.exports = {
     }
     next();
   },
-  validationStatus: (req, res, next) => {
-    const schema = validationSchemaStatus();
+  validationContactStatus: (req, res, next) => {
+    const schema = validationSchemaContactStatus();
+    const validationResult = schema.validate(req.body);
+    if (validationResult.error) {
+      return res
+        .status(404)
+        .json({ message: validationResult.error.details[0].message });
+    }
+    next();
+  },
+  validationUserSubscription: (req, res, next) => {
+    const schema = validationSchemaUserSubscription();
+    const validationResult = schema.validate(req.body);
+    if (validationResult.error) {
+      return res
+        .status(404)
+        .json({ message: validationResult.error.details[0].message });
+    }
+    next();
+  },
+  validationUser: (req, res, next) => {
+    const schema = validationSchemaUserSignup();
     const validationResult = schema.validate(req.body);
     if (validationResult.error) {
       return res
