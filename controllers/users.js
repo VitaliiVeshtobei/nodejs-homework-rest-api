@@ -1,8 +1,12 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
 
 const { SECRET_KEY } = process.env;
 const { User } = require("../models/user");
+
+const path = require("path");
+const fs = require("fs/promises");
 
 const signup = async (req, res, next) => {
   try {
@@ -12,10 +16,10 @@ const signup = async (req, res, next) => {
     if (user) {
       return res.status(409).json({ message: "Email in use" });
     }
-
+    const avatarURL = gravatar.url(email);
     const hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
-    await User.create({ email, password: hashPassword });
+    await User.create({ email, password: hashPassword, avatarURL });
     res.status(201).json({
       user: {
         email,
@@ -100,4 +104,32 @@ const updateSubscription = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, login, getCurrent, logout, updateSubscription };
+const avatarsDir = path.join(__dirname, "../", "public", "avatars");
+
+const updateAvatar = async (req, res, next) => {
+  const { path: tmpUpload, originalname } = req.file;
+  const { _id: id } = req.user;
+  const imageName = `${id}_${originalname}`;
+  try {
+    const resultUpload = path.join(avatarsDir, imageName);
+    await fs.rename(tmpUpload, resultUpload);
+    const avatarURL = path.join("public", "avatars", imageName);
+    console.log(avatarURL);
+    await User.findByIdAndUpdate(req.user._id, { avatarURL });
+    res.status(200).json({
+      avatarURL: avatarURL,
+    });
+  } catch (error) {
+    await fs.unlink(tmpUpload);
+    next(error);
+  }
+};
+
+module.exports = {
+  signup,
+  login,
+  getCurrent,
+  logout,
+  updateSubscription,
+  updateAvatar,
+};
