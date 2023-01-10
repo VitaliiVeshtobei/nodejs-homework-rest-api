@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
+const Jimp = require("jimp");
 
 const { SECRET_KEY } = process.env;
 const { User } = require("../models/user");
@@ -110,6 +111,10 @@ const updateAvatar = async (req, res, next) => {
   const { path: tmpUpload, originalname } = req.file;
   const { _id: id } = req.user;
   const imageName = `${id}_${originalname}`;
+  const image = await Jimp.read(tmpUpload);
+  await image.resize(250, 250);
+  await image.writeAsync(tmpUpload);
+
   try {
     const resultUpload = path.join(avatarsDir, imageName);
     await fs.rename(tmpUpload, resultUpload);
