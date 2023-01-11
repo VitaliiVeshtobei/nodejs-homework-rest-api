@@ -16,12 +16,14 @@ const {
   logout,
   updateSubscription,
   updateAvatar,
+  verifyEmail,
 } = require("../../controllers/users");
 
 router.post("/signup", validationUser, signup);
 router.post("/login", validationUser, login);
 router.post("/current", auth, validationUser, getCurrent);
 router.get("/logout", auth, logout);
+router.get("/verify/:verificationToken", verifyEmail);
 // router.patch("/:userID", validationUserSubscription, updateSubscription);
 router.patch("/avatars", auth, upload.single("avatar"), updateAvatar);
 
