@@ -163,6 +163,27 @@ const verifyEmail = async (req, res, next) => {
   res.status(200).json({ message: "Verification successful" });
 };
 
+const verify = async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "missing required field email" });
+  }
+  const user = await User.findOne({ email });
+
+  if (!user.verify) {
+    const verificationToken = nanoid();
+    const mail = {
+      to: email,
+      subject: "Подтверждение email",
+      html: `<a target="_blank" href="http://localhost:3000/api/users/verify/${verificationToken}">Подтвердить email</a>`,
+    };
+
+    await sendEmail(mail);
+    return res.status(200).json({ message: "Verification email sent" });
+  }
+  res.status(400).json({ message: "Verification has already been passed" });
+};
+
 module.exports = {
   signup,
   login,
@@ -171,4 +192,5 @@ module.exports = {
   updateSubscription,
   updateAvatar,
   verifyEmail,
+  verify,
 };
